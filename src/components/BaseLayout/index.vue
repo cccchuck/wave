@@ -35,6 +35,6 @@ const navList: Ref<INav[]> = ref([
 header {
   width: 100%;
   height: 100%;
-  background-color: @bg-color;
+  background-color: var(--color-background);
 }
 </style>

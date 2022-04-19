@@ -1,0 +1,33 @@
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  --color-heading: #272343;
+  --color-content: #2d334a;
+  --color-background: #e3f6f5;
+  --color-background-btn: var(--color-heading);
+  --color-text-btn: #fffffe;
+  --color-highlight-text: #fffffe;
+  --color-box-shadow: rgba(0, 0, 0, 0.1);
+
+  --gap-size: 1em;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-heading: #fffffe;
+    --color-content: #b8c1ec;
+    --color-background: #232946;
+    --color-background-btn: #d4939d;
+    --color-text-btn: #fffffe;
+    --color-highlight-text: #d4939d;
+    --color-box-shadow: rgba(255, 255, 255, 0.1);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+  font-weight: normal;
+}
