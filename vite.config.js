@@ -15,4 +15,9 @@ export default defineConfig({
     port: 3000,
     open: true,
   },
+  cssPreprocessOptions: {
+    less: {
+      javascriptEnabled: true,
+    },
+  },
 })

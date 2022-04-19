@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import BaseNav from '@/components/BaseNav/index.vue'
 import { RouterView } from 'vue-router'
-import { ref, Ref } from 'vue'
-import { INav } from '../BaseNav/type'
+import { ref } from 'vue'
+import type { Ref } from 'vue'
+import type { INav } from '../BaseNav/type'
 
 const navList: Ref<INav[]> = ref([
   {
@@ -27,3 +28,13 @@ const navList: Ref<INav[]> = ref([
     <RouterView />
   </main>
 </template>
+
+<style lang="less" scoped>
+@import '@/assets/styles/variables.less';
+
+header {
+  width: 100%;
+  height: 100%;
+  background-color: @bg-color;
+}
+</style>
