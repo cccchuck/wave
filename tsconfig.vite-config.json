@@ -1,11 +1,14 @@
 {
   "extends": "@vue/tsconfig/tsconfig.node.json",
-  "include": ["vite.config.*", "./src/**/*"],
+  "include": ["custom.d.ts", "vite.config.*", "./src/**/*"],
   "compilerOptions": {
     "composite": true,
     "types": ["node"],
     "paths": {
       "@/*": ["./src/*"]
     },
+    "preserveValueImports": false,
+    "importsNotUsedAsValues": "preserve",
+    "lib": ["es2020", "dom"],
   }
 }
