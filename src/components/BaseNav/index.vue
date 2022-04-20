@@ -116,7 +116,7 @@ onUnmounted(async () => {
   margin: 0 auto;
   align-items: center;
 
-  & * + * {
+  & * {
     transition: all 0.2s linear;
   }
 
@@ -166,10 +166,17 @@ onUnmounted(async () => {
       }
     }
 
+    & > .ieth-nav__account {
+      & > .ieth-nav__account-address {
+        & span {
+          color: var(--color-heading);
+          font-weight: bold;
+        }
+      }
+    }
+
     & > div + div {
       margin-left: var(--gap-size);
-      font-weight: bold;
-      color: var(--color-heading);
     }
 
     & > .ieth-nav__connect-wallet,
