@@ -30,8 +30,6 @@ const navList: Ref<INav[]> = ref([
 </template>
 
 <style lang="less" scoped>
-@import '@/assets/styles/variables.less';
-
 header {
   width: 100%;
   height: 100%;

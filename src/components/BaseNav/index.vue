@@ -1,10 +1,20 @@
 <script lang="ts" setup>
+import { ref, onMounted, onUnmounted } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
-import type { INav } from './type'
-import { ref } from 'vue'
+import { useUserStore } from '@/stores'
 import SunModeSVG from '@/assets/icon/sun-mode.svg'
 import DarkModeSVG from '@/assets/icon/dark-mode.svg'
+import toggleShowMode from '@/utils/toggleShowMode'
+import listeners from '@/utils/web3/listeners'
+import {
+  connectWallet,
+  disconnectWallet,
+  registListeners,
+  removeListeners,
+} from '@/utils/web3'
+
+import type { INav } from './type'
 
 defineProps({
   navList: {
@@ -13,21 +23,51 @@ defineProps({
   },
 })
 
+const userStore = useUserStore()
+
+const currentRoute = useRoute()
+
 const media = window.matchMedia('(prefers-color-scheme: dark)')
 
 const isDark = ref(media.matches)
 
-media.addListener((newMedia: any) => {
-  isDark.value = newMedia.matches
+media.addEventListener('change', () => {
+  isDark.value = media.matches
 })
 
-const currentRoute = useRoute()
+const handleToggleShowMode = () => {
+  const state = toggleShowMode()
+  isDark.value = state === '0' ? true : false
+}
+
+const handleConnectWallet = async () => {
+  await connectWallet()
+}
+
+const handleDisConnectWallet = async () => {
+  await disconnectWallet()
+}
 
 const navigateTo = async (name: string) => {
   const { name: currentName } = currentRoute
   if (name === currentName) return
   router.push({ name })
 }
+
+onMounted(async () => {
+  await registListeners(listeners)
+  await connectWallet()
+  if (isDark.value) {
+    localStorage.setItem('isDark', '1')
+  } else {
+    localStorage.setItem('isDark', '0')
+  }
+})
+
+onUnmounted(async () => {
+  await removeListeners(listeners)
+  await disconnectWallet()
+})
 </script>
 
 <template>
@@ -45,19 +85,28 @@ const navigateTo = async (name: string) => {
     </ul>
 
     <div class="ieth-nav__btn">
-      <div class="ieth-nav__toggle-show-mode">
-        <img :src="isDark ? SunModeSVG : DarkModeSVG" alt="" />
+      <div class="ieth-nav__toggle-show-mode" @click="handleToggleShowMode">
+        <img :src="isDark ? SunModeSVG : DarkModeSVG" alt="切换显示模式" />
       </div>
 
-      <div class="ieth-nav__connect-wallet">
-        <button>连接钱包</button>
+      <div class="ieth-nav__account" v-if="userStore.isConnected">
+        <div class="ieth-nav__account-address">
+          <span>{{ userStore.getAddress }}</span>
+        </div>
+      </div>
+
+      <div class="ieth-nav__connect-wallet" v-if="!userStore.isConnected">
+        <button @click="handleConnectWallet">连接钱包</button>
+      </div>
+
+      <div class="ieth-nav__dis-connect-wallet" v-if="userStore.isConnected">
+        <button @click="handleDisConnectWallet">断开连接</button>
       </div>
     </div>
   </nav>
 </template>
 
 <style lang="less" scoped>
-@import '@/assets/styles/variables.less';
 .ieth-nav {
   display: flex;
   max-width: 1200px;
@@ -66,6 +115,10 @@ const navigateTo = async (name: string) => {
   height: 70px;
   margin: 0 auto;
   align-items: center;
+
+  & * + * {
+    transition: all 0.2s linear;
+  }
 
   & > .ieth-nav__nav {
     display: flex;
@@ -77,7 +130,6 @@ const navigateTo = async (name: string) => {
       border: 1px solid transparent;
       color: var(--color-heading);
       font-weight: bold;
-      transition: all 0.2s linear;
 
       & + .ieth-nav__item {
         margin-left: var(--gap-size);
@@ -103,7 +155,6 @@ const navigateTo = async (name: string) => {
     & > .ieth-nav__toggle-show-mode {
       padding: 5px;
       border-radius: 5px;
-      transition: all 0.2s linear;
 
       & > img {
         vertical-align: bottom;
@@ -115,9 +166,14 @@ const navigateTo = async (name: string) => {
       }
     }
 
-    & > .ieth-nav__connect-wallet {
+    & > div + div {
       margin-left: var(--gap-size);
+      font-weight: bold;
+      color: var(--color-heading);
+    }
 
+    & > .ieth-nav__connect-wallet,
+    & > .ieth-nav__dis-connect-wallet {
       & > button {
         padding: calc(var(--gap-size) / 2) var(--gap-size);
         background-color: var(--color-background-btn);
@@ -125,12 +181,11 @@ const navigateTo = async (name: string) => {
         border: none;
         border-radius: 5px;
         outline: none;
-        transition: all 0.2s linear;
         font-weight: bold;
 
         &:hover {
           cursor: pointer;
-          box-shadow: 0 1px 10px 5px var(--color-box-shadow);
+          box-shadow: 0 1px 10px 10px var(--color-box-shadow);
         }
       }
     }
