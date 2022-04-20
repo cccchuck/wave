@@ -33,6 +33,7 @@ const isDark = ref(media.matches)
 
 media.addEventListener('change', () => {
   isDark.value = media.matches
+  saveDarkState()
 })
 
 const handleToggleShowMode = () => {
@@ -54,14 +55,18 @@ const navigateTo = async (name: string) => {
   router.push({ name })
 }
 
+function saveDarkState() {
+  if (isDark.value) {
+    localStorage.setItem('dark', '1')
+  } else {
+    localStorage.setItem('dark', '0')
+  }
+}
+
 onMounted(async () => {
   await registListeners(listeners)
   await connectWallet()
-  if (isDark.value) {
-    localStorage.setItem('isDark', '1')
-  } else {
-    localStorage.setItem('isDark', '0')
-  }
+  saveDarkState()
 })
 
 onUnmounted(async () => {

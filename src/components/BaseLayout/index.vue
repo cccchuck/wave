@@ -35,4 +35,13 @@ header {
   height: 100%;
   background-color: var(--color-background);
 }
+
+main {
+  overflow: auto;
+  min-width: 800px;
+  max-width: 1200px;
+  height: calc(100vh - 70px);
+  margin: 0 auto;
+  background-color: var(--color);
+}
 </style>

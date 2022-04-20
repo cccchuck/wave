@@ -37,6 +37,7 @@ const connectWallet = async () => {
       const chainId = await ethereum.request({ method: 'eth_chainId' });
       await userStore.setAddress(accounts[0])
       await userStore.setChainID(chainId)
+      Notification.success('🚀 欢迎回来')
     } else {
       throw new Error('请确保你的浏览器安装了钱包插件')
     }
