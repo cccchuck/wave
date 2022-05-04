@@ -5,6 +5,61 @@ export const abi = [
     type: 'constructor',
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'from',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'timestamp',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'message',
+        type: 'string',
+      },
+    ],
+    name: 'NewWave',
+    type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'getAllWaves',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'waver',
+            type: 'address',
+          },
+          {
+            internalType: 'string',
+            name: 'message',
+            type: 'string',
+          },
+          {
+            internalType: 'uint256',
+            name: 'timestamp',
+            type: 'uint256',
+          },
+        ],
+        internalType: 'struct WavePortal.Wave[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'getTotalWaves',
     outputs: [
@@ -18,7 +73,13 @@ export const abi = [
     type: 'function',
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_message',
+        type: 'string',
+      },
+    ],
     name: 'wave',
     outputs: [],
     stateMutability: 'nonpayable',

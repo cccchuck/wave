@@ -1,25 +1,62 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { getTotalWaves, wave } from '@/utils/web3/contract'
+import { getTotalWaves, wave, getAllWaves } from '@/utils/web3/contract'
+import type { Ref } from 'vue'
+import type { IWave } from '@/utils/web3/types'
+import { Message } from '@arco-design/web-vue'
 
 const waveCounts = ref(0)
 
+const allWaves: Ref<IWave[]> = ref([])
+
 const isLoading = ref(false)
+
+const content = ref('')
+
+const avatarImgUrls = [
+  'https://tva1.sinaimg.cn/large/e6c9d24ely1h1wg7myx4sj208a08adfz.jpg',
+  'https://tva1.sinaimg.cn/large/e6c9d24ely1h1wg8bcupyj208a08ajrg.jpg',
+  'https://tva1.sinaimg.cn/large/e6c9d24ely1h1wg8m1zloj208a08adfy.jpg',
+]
 
 const handleGetTotalWaves = async () => {
   const _waveCounts = await getTotalWaves()
   waveCounts.value = parseInt(_waveCounts)
 }
 
+const handleGetAllWaves = async () => {
+  const tempAllWaves: IWave[] = []
+  const _allWaves = await getAllWaves()
+  _allWaves.forEach((item: IWave) => {
+    tempAllWaves.push({
+      waver: item.waver,
+      message: item.message,
+      timestamp: new Date(item.timestamp * 1000).getTime(),
+    })
+  })
+  allWaves.value = tempAllWaves
+}
+
 const handleWave = async () => {
   isLoading.value = true
-  await wave()
+  await wave(content.value)
   await handleGetTotalWaves()
+  await handleGetAllWaves()
   isLoading.value = false
 }
 
+const getRandomAvatar = () => {
+  return avatarImgUrls[Math.floor(Math.random() * avatarImgUrls.length)]
+}
+
 onMounted(async () => {
+  const msgRet = Message.loading({
+    content: 'Loading...',
+    duration: 9999,
+  })
   await handleGetTotalWaves()
+  await handleGetAllWaves()
+  msgRet.close()
 })
 </script>
 
@@ -40,7 +77,10 @@ onMounted(async () => {
       />
     </div>
     <div mb-4>
-      <a-textarea placeholder="可以在这里附加一些文本信息"></a-textarea>
+      <a-textarea
+        v-model="content"
+        placeholder="可以在这里附加一些文本信息"
+      ></a-textarea>
     </div>
     <div mb-8>
       <a-button type="primary" @click="handleWave" :loading="isLoading"
@@ -53,17 +93,11 @@ onMounted(async () => {
     <h2 mb-4>历史消息</h2>
 
     <a-list>
-      <a-list-item>
-        <a-list-item-meta
-          title="Beijing Bytedance Technology Co., Ltd."
-          description="Beijing ByteDance Technology Co., Ltd. is an enterprise located in China."
-        >
+      <a-list-item v-for="wave in allWaves" :key="wave.timestamp">
+        <a-list-item-meta :title="wave.waver" :description="wave.message">
           <template #avatar>
             <a-avatar shape="square">
-              <img
-                alt="avatar"
-                src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-              />
+              <img alt="avatar" :src="getRandomAvatar()" />
             </a-avatar>
           </template>
         </a-list-item-meta>

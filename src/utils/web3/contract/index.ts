@@ -1,11 +1,11 @@
-import type { IWindow, IFunction } from '../types'
+import type { IWindow, IFunction, IWave } from '../types'
 import { Contract, ethers } from 'ethers'
 import { abi } from './abi'
 import { Message } from '@arco-design/web-vue'
 import { useUserStore } from '@/stores'
 
 const userStore = useUserStore()
-const CONTRACT_ADDRESS = '0x4f8115a1EDd250353058AbDfFe7066546daeebfE'
+const CONTRACT_ADDRESS = '0x7fA50F0747db4B46d87262f5ec2868a88E70Cf99'
 const CONTRACT_ABI = JSON.stringify(abi)
 
 async function sendTransaction<T>(fn: IFunction<T>): Promise<T> {
@@ -50,11 +50,21 @@ async function getTotalWaves(): Promise<string> {
   return count
 }
 
-async function wave() {
+async function getAllWaves(): Promise<IWave[]> {
+  const allWaves: IWave[] = await sendTransaction<IWave[]>(
+    async (contract: Contract) => {
+      const allWaves = await contract.getAllWaves()
+      return allWaves
+    }
+  )
+  return allWaves
+}
+
+async function wave(message: string = '该用户招了招手什么也没留下') {
   await sendTransaction(async (contract: Contract) => {
-    const tx = await contract.wave()
+    const tx = await contract.wave(message)
     await tx.wait()
   })
 }
 
-export { getTotalWaves, wave }
+export { getTotalWaves, getAllWaves, wave }
