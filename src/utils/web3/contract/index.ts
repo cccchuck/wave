@@ -5,7 +5,7 @@ import { Message } from '@arco-design/web-vue'
 import { useUserStore } from '@/stores'
 
 const userStore = useUserStore()
-const CONTRACT_ADDRESS = '0x7fA50F0747db4B46d87262f5ec2868a88E70Cf99'
+const CONTRACT_ADDRESS = '0xf0F397d3285b36e9586691C4BB3FE9fc63f91506'
 const CONTRACT_ABI = JSON.stringify(abi)
 
 async function sendTransaction<T>(fn: IFunction<T>): Promise<T> {
@@ -60,7 +60,7 @@ async function getAllWaves(): Promise<IWave[]> {
   return allWaves
 }
 
-async function wave(message: string = '该用户招了招手什么也没留下') {
+async function wave(message: string): Promise<void> {
   await sendTransaction(async (contract: Contract) => {
     const tx = await contract.wave(message)
     await tx.wait()

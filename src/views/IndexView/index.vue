@@ -39,7 +39,9 @@ const handleGetAllWaves = async () => {
 
 const handleWave = async () => {
   isLoading.value = true
-  await wave(content.value)
+  await wave(
+    content.value === '' ? '该用户挥了挥手什么也没留下' : content.value
+  )
   await handleGetTotalWaves()
   await handleGetAllWaves()
   isLoading.value = false
@@ -94,7 +96,12 @@ onMounted(async () => {
 
     <a-list>
       <a-list-item v-for="wave in allWaves" :key="wave.timestamp">
-        <a-list-item-meta :title="wave.waver" :description="wave.message">
+        <a-list-item-meta
+          :title="wave.waver"
+          :description="
+            wave.message === '' ? '该用户挥了挥手什么也没留下' : wave.message
+          "
+        >
           <template #avatar>
             <a-avatar shape="square">
               <img alt="avatar" :src="getRandomAvatar()" />
