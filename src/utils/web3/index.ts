@@ -6,7 +6,7 @@ import { Notification } from '@arco-design/web-vue'
 const registListeners = async (listeners: IListener[]) => {
   if (!ethereum) return
 
-  listeners.forEach(listener => {
+  listeners.forEach((listener) => {
     ethereum.on(listener.event, listener.callback)
   })
 
@@ -16,7 +16,7 @@ const registListeners = async (listeners: IListener[]) => {
 const removeListeners = async (listeners: IListener[]) => {
   if (!ethereum) return
 
-  listeners.forEach(listener => {
+  listeners.forEach((listener) => {
     ethereum.removeListener(listener.event, listener.callback)
   })
 
@@ -33,16 +33,21 @@ const connectWallet = async () => {
   try {
     if (hasProvider) {
       const userStore = useUserStore()
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-      const chainId = await ethereum.request({ method: 'eth_chainId' });
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+      const chainId = await ethereum.request({ method: 'eth_chainId' })
       await userStore.setAddress(accounts[0])
       await userStore.setChainID(chainId)
-      Notification.success('🚀 欢迎回来')
+
+      if (chainId === '0x4') {
+        Notification.success('🚀 欢迎回来')
+      } else {
+        Notification.error('🔧 请切换到 Rinkeby 网络')
+      }
     } else {
       throw new Error('请确保你的浏览器安装了钱包插件')
     }
   } catch (error) {
-    const { code, message } = error as { code: number, message: string }
+    const { code, message } = error as { code: number; message: string }
     if (code === 4001) {
       Notification.error('用户拒绝登录')
     } else {

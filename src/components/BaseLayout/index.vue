@@ -30,18 +30,9 @@ const navList: Ref<INav[]> = ref([
 </template>
 
 <style lang="less" scoped>
-header {
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-background);
-}
-
 main {
-  overflow: auto;
-  min-width: 800px;
-  max-width: 1200px;
-  height: calc(100vh - 70px);
-  margin: 0 auto;
-  background-color: var(--color);
+  width: 100vw;
+  min-height: calc(100vh - 58px);
+  background-color: var(--color-bg-1);
 }
 </style>
